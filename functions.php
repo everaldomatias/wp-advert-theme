@@ -64,10 +64,10 @@ add_action( 'wp_head', 'mfields_test_remove_actions' );
  * @since 0.1
  * @return string
  */
-function adv_adverts_the_content($content) {
+function adv_adverts_the_content( $content ) {
     global $wp_query;
     
-    if (is_singular('advert') && in_the_loop() ) {
+    if ( is_singular( 'advert' ) && in_the_loop() ) {
         ob_start();
         $post_id = get_the_ID();
         $post_content = $content;
@@ -75,7 +75,7 @@ function adv_adverts_the_content($content) {
         $content = ob_get_clean();
     } elseif( is_tax( 'advert_category' ) && in_the_loop() ) {
         add_action( 'adverts_sh_list_before', 'adverts_list_show_term_description' );
-        $content = shortcode_adverts_list(array(
+        $content = shortcode_adverts_list( array(
             "category" => $wp_query->get_queried_object_id()
         ));
         remove_action( 'adverts_sh_list_before', 'adverts_list_show_term_description' );
