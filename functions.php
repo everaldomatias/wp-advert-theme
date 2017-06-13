@@ -10,6 +10,9 @@ function adv_enqueue_scripts() {
 	/* CSS do tema pai Twenty Seventeen */
 	wp_enqueue_style( 'twentyseventeen', get_template_directory_uri() . '/style.css' );
 
+    /* Custom CSS dpara o child theme */
+    wp_enqueue_style( 'adverts', get_stylesheet_directory_uri() . '/assets/css/style.css' );
+
 }
 
 add_action( 'wp_enqueue_scripts', 'adv_enqueue_scripts', 1 );
@@ -37,7 +40,7 @@ function adv_custom_parse_request( $query ) {
 add_action( 'pre_get_posts', 'adv_custom_parse_request' );
 function adv_remove_cpt_slug( $post_link, $post, $leavename ) {
 
-    if ( 'advert' != $post->post_type  || 'publish' != $post->post_status ) {
+    if ( 'advert' != $post->post_type || 'publish' != $post->post_status ) {
         return $post_link;
     }
 
@@ -71,7 +74,7 @@ function adv_adverts_the_content( $content ) {
         ob_start();
         $post_id = get_the_ID();
         $post_content = $content;
-        include apply_filters( "adverts_template_load", get_stylesheet_directory() . '/templates/single-advert.php' );
+        include apply_filters( 'adverts_template_load', get_stylesheet_directory() . '/templates/single-advert.php' );
         $content = ob_get_clean();
     } elseif( is_tax( 'advert_category' ) && in_the_loop() ) {
         add_action( 'adverts_sh_list_before', 'adverts_list_show_term_description' );
@@ -85,3 +88,24 @@ function adv_adverts_the_content( $content ) {
 }
 
 add_filter( 'the_content', 'adv_adverts_the_content' );
+
+/*
+ * Substitui o arquivo list-item.php do plugin pelo que está na pasta /templates do tema
+ */
+add_action( 'adverts_template_load', 'adv_custom_list_item_template' );
+function adv_custom_list_item_template( $tpl ) {
+
+    // $tpl is an absolute path to a file, for example
+    // /home/simpliko/public_html/wp-content/plugins/wpadverts/templates/list-item.php
+    
+    $basename = basename( $tpl );
+    // $basename is just a filename for example list-item.php
+     
+    if( $basename == "list-item.php" ) {
+        // return path to list.php file in custom-list-template directory
+        return dirname( __FILE__ ) . "/templates/list-item.php";
+    } else {
+        return $tpl;
+    }
+}
+
